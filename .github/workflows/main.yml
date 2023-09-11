@@ -98,3 +98,12 @@ jobs:
           submodules: 'recursive'
       - name: Build
         id: cmake_build
+        run: |
+          mkdir build
+          cd build
+          cmake .. ${{ matrix.defines }}
+          cmake --build . --config Release
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./build/**/*.so
+          name: stable-diffusion-bin-linux-${{ matrix.build }}-x64.so 
