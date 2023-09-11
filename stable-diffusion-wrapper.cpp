@@ -23,9 +23,15 @@
 #define STB_IMAGE_WRITE_STATIC
 #include "stable-diffusion.cpp/examples/stb_image_write.h"
 
+#    if defined(_WIN32) && !defined(__MINGW32__)
+#        define WRAPPER_API __declspec(dllexport)
+#    else
+#        define WRAPPER_API __attribute__ ((visibility ("default")))
+#    endif
+
 extern "C" struct StableDiffusion;
 
-extern "C" __declspec(dllexport) StableDiffusion* StableDiffusion_Create(int n_threads,
+extern "C" WRAPPER_API StableDiffusion* StableDiffusion_Create(int n_threads,
                                             bool vae_decode_only,
                                             bool free_params_immediately,
                                             RNGType rng_type)
@@ -33,12 +39,12 @@ extern "C" __declspec(dllexport) StableDiffusion* StableDiffusion_Create(int n_t
                                                 return new StableDiffusion(n_threads, vae_decode_only, free_params_immediately, rng_type);
                                             }
 
-extern "C" __declspec(dllexport) bool StableDiffusion_LoadFromFile(StableDiffusion* sd, const char* file_path)
+extern "C" WRAPPER_API bool StableDiffusion_LoadFromFile(StableDiffusion* sd, const char* file_path)
 {
     return sd->load_from_file(file_path);
 }
 
-extern "C" __declspec(dllexport) int StableDiffusion_Txt2Img_Path(StableDiffusion* sd,
+extern "C" WRAPPER_API int StableDiffusion_Txt2Img_Path(StableDiffusion* sd,
                                            const char* prompt,
                                            const char* negative_prompt,
                                            float cfg_scale,
@@ -54,7 +60,7 @@ extern "C" __declspec(dllexport) int StableDiffusion_Txt2Img_Path(StableDiffusio
     return 0;
 }
 
-extern "C" __declspec(dllexport) int StableDiffusion_Img2Img_Path(StableDiffusion* sd,
+extern "C" WRAPPER_API int StableDiffusion_Img2Img_Path(StableDiffusion* sd,
                                            const char* init_img,
                                            const char* prompt,
                                            const char* negative_prompt,
